@@ -28,9 +28,9 @@ typedef struct {
 } TileProps;
 
 
-// test map - player would be unable to move off this map
+// test map - player would be unable to move off this map. This will ultimately be replaced with a function that reads txt files from rsc. 
 static const char *test_map[MAP_H] = {
-  "############.############",
+  "#########################",
   "#.......................#",
   "#.......................#",
   "#.......................#",
@@ -44,12 +44,11 @@ static const char *test_map[MAP_H] = {
   "#.......................#",
   "#.......................#",
   "#########################"
-
 };
 
 // init an array of struct type TileProps using the TILE_COUNT as the size of the array.
 static const TileProps tile_defs[TILE_COUNT] = {
-  [TILE_FLOOR] = { PURPLE, false, '.'},
+  [TILE_FLOOR] = { LIGHTGRAY, false, '.'},
   [TILE_WALL]  = { DARKGRAY, true, '#'},
 };
 
@@ -88,6 +87,61 @@ void LoadMapFromASCII(TileType *m, const char **rows) {
 
 // --- END MAP WORK
 
+
+// --- START MOVEMENT WORK
+
+const float MOVE_DELAY = 0.15f;
+
+// Player struct to define a given player state
+typedef struct {
+  int tileX, tileY;
+  Vector2 pixelPos;
+  Vector2 size;
+  float moveTimer;
+} Player;
+
+
+// basic collision detection
+static bool IsTileSolid(TileType *map, int x, int y) {
+  if(x < 0 || x >= MAP_W || y < 0 || y>= MAP_H) return true;
+  return tile_defs[*TileAt(map, x, y)].solid;
+}
+
+void PlayerMove(Player *p, TileType *map, float deltaTime) {
+  // tick down the movement cooldown
+  p->moveTimer -= deltaTime;
+
+  // determine direction from input
+  int dx = 0, dy = 0;
+
+  if (IsKeyPressed(KEY_RIGHT) || (IsKeyDown(KEY_RIGHT) && p->moveTimer <= 0.0f))    dx = 1;
+  else if (IsKeyPressed(KEY_LEFT) || (IsKeyDown(KEY_LEFT) && p->moveTimer <= 0.0f)) dx = -1;
+  else if (IsKeyPressed(KEY_UP) || (IsKeyDown(KEY_UP) && p->moveTimer <= 0.0f))     dy = -1;
+  else if (IsKeyPressed(KEY_DOWN) || (IsKeyDown(KEY_DOWN) && p->moveTimer <= 0.0f)) dy = 1;
+
+  // no valid input return
+  if (dx == 0 && dy == 0) return;
+
+  // calc target tile
+  int targetX = p->tileX + dx;
+  int targetY = p->tileY + dy;
+
+  // collision check baked in
+  if (IsTileSolid(map, targetX, targetY)) return;
+  
+
+  //actually move
+  p->tileX = targetX;
+  p->tileY = targetY;
+  p->pixelPos.x = p->tileX * TILE_SIZE;
+  p->pixelPos.y = p->tileY * TILE_SIZE;
+  p->moveTimer = MOVE_DELAY;
+
+}
+
+
+// -- END MOVEMENT WORK
+
 int main(void){
 
   // screen info
@@ -98,11 +152,21 @@ int main(void){
   // not sure if I love the way this would scale
   // TODO:
   // - [ ] investigate better scaled solutions for drawing map.
+
+  // the function args work because of the decay of arrays into a pointer of its first element when you pass it into a function.
   LoadMapFromASCII(map, test_map);
 
+  // movement cooldown
+
   // player attributes
-  Vector2 playerPosition = { (float)screenWidth/2, (float)screenHeight/2};
-  Vector2 playerSize = { 32.0f, 32.0f };
+  Player player = {  
+    .tileX = MAP_W / 2,
+    .tileY = MAP_H / 2,
+    .pixelPos = { (MAP_W / 2) * TILE_SIZE, (MAP_H / 2) * TILE_SIZE},
+    .size = { 32.0f, 32.0f },
+    .moveTimer = 0.0f
+  };
+
 
   SetTargetFPS(60);
 
@@ -110,21 +174,16 @@ int main(void){
   while (!WindowShouldClose()) {
 
     // update vars
-    //
-    if (IsKeyDown(KEY_RIGHT)) playerPosition.x  += 2.0f;
-    if (IsKeyDown(KEY_LEFT)) playerPosition.x   -= 2.0f;
-    if (IsKeyDown(KEY_UP)) playerPosition.y     -= 2.0f;
-    if (IsKeyDown(KEY_DOWN)) playerPosition.y   += 2.0f;
+    PlayerMove(&player, map, GetFrameTime());
     
     // draw
-    //
     BeginDrawing();
 
       ClearBackground(RAYWHITE);
 
       DrawMap();
 
-      DrawRectangleV(playerPosition, playerSize, WHITE);
+      DrawRectangleV(player.pixelPos, player.size, WHITE);
 
     EndDrawing();
 

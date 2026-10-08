@@ -9,7 +9,7 @@ The goal of this repository is twofold.
 ---
 ## building the project
 
-As of now, this project builds for MacOS on ARM.
+As of now, this project builds for MacOS on ARM and Linux. `raylib` is required,, but once that's setup properly you only need to run `make` in the repo root dir. 
 
 ---
 
@@ -64,16 +64,20 @@ One of the advantages of this accessor function is that it works in both directi
 - [x] draw character (circle) to screen
 - [x] implement movement
 - [ ] include Windows make
-- [ ] include linux make
+- [x] include linux make, worked with no edit :)
 - [ ] boundaries (collisions)
 - [x] develop a tiling system for rendering map
+- [ ] menu
+- [ ] title screen
+- [ ] reading signs.
+- [ ] inventory system
 
 ### ToDo - movement
 - [ ] implement shift hold speed up.
 - [ ] attack key
 - [ ] defend
 - [ ] wasd based movement(?) 
-- [ ] implement a more snap based movement system. 
+- [x] implement a more snap based movement system. 
 
 ### ToDo - tiling
 - [x] create enum of TileTypes
@@ -81,4 +85,6 @@ One of the advantages of this accessor function is that it works in both directi
 - [x] craft array of tile_defs
 - [x] draw map
 - [ ] standalone header file
-- [ ] develop a prototype system for map generation.
+- [ ] **ON DECK** develop a prototype system for map generation.
+  - [ ] refactor to load maps from text files.
+  - [ ] investigate 'hot reload' of map files. Implement a reload key or something to that effect?
