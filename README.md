@@ -15,6 +15,8 @@ As of now, this project builds for MacOS on ARM and Linux. `raylib` is required,
 
 ## notes
 
+- Header files include whatever they use (in this case often `#include "raylib.h"`. Header MUST compile on its own. 
+
 ### tiling
 
 ~~Thinking about having a file that defines structs for tiles. Need to think about how to place the blocks.~~

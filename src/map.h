@@ -1,5 +1,6 @@
-#ifndef HOLLER_MAP
-#define HOLLER_MAP
+#ifndef HOLLER_MAP_H
+#define HOLLER_MAP_H
+// note that the header file holds things that callers need. Whatever is left over is held in the c file.
 
 #include "raylib.h"
 
@@ -17,10 +18,10 @@
 typedef enum {
   TILE_FLOOR,
   TILE_WALL,
-  TILE_COUNT // <- NEW Tile types MUST be above this entry. This is used for the
-             // size of the array below the TileProps Table.
+  TILE_COUNT // <- NEW Tile types MUST be above this entry. This is used for the size of the array below the TileProps Table.
 } TileType;
 
+// the following functions are placeholders filled in by the map.c file. Note that they are not static in that file because they are called in main.
 void MapLoadTest(void);
 void DrawMap(void);
 bool MapIsSolid(int x, int y);

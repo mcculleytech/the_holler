@@ -18,6 +18,8 @@ static const char *test_map[MAP_H] = {
     "#.......................#", "#.......................#",
     "#.......................#", "#########################"};
 
+// anything that is going to be held within this file only gets a static declaration. Anything called by main gets a declaration in the map.h file.
+
 // init an array of struct type TileProps using the TILE_COUNT as the size of
 // the array.
 static const TileProps tile_defs[TILE_COUNT] = {
