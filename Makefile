@@ -16,8 +16,8 @@ LDLIBS	:= $(shell pkg-config --libs raylib)
 
 all: $(TARGET)
 
-$(TARGET): $(SRC_DIR)/main.c | $(BIN_DIR)
-	$(CC) $(CFLAGS) $< -o $@ $(LDLIBS) -Wall -Wextra
+$(TARGET): $(SRC_DIR)/main.c $(SRC_DIR)/map.c $(SRC_DIR)/map.h | $(BIN_DIR)
+	$(CC) $(CFLAGS) $(SRC_DIR)/main.c $(SRC_DIR)/map.c -o $@ $(LDLIBS) -Wall -Wextra
 
 $(BIN_DIR):
 	mkdir -p $@

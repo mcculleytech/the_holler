@@ -52,7 +52,6 @@ One of the advantages of this accessor function is that it works in both directi
 ---
 
 ## ToDo - Master
-
 - [x] install [raylib](https://github.com/raysan5/raylib/wiki/Working-on-macOS)
 - [x] build project structure.
   - [x] init the repo w/
@@ -63,10 +62,10 @@ One of the advantages of this accessor function is that it works in both directi
 - [x] draw screen
 - [x] draw character (circle) to screen
 - [x] implement movement
-- [ ] include Windows make
-- [x] include linux make, worked with no edit :)
-- [ ] boundaries (collisions)
 - [x] develop a tiling system for rendering map
+- [x] include linux make, worked with no edit :)
+- [x] boundaries (basic collisions)
+- [ ] include Windows make
 - [ ] menu
 - [ ] title screen
 - [ ] reading signs.
@@ -84,7 +83,8 @@ One of the advantages of this accessor function is that it works in both directi
 - [x] create struct of TileProps
 - [x] craft array of tile_defs
 - [x] draw map
-- [ ] standalone header file
+- [x] standalone header file
+- [x] standalone c file
 - [ ] **ON DECK** develop a prototype system for map generation.
   - [ ] refactor to load maps from text files.
   - [ ] investigate 'hot reload' of map files. Implement a reload key or something to that effect?
