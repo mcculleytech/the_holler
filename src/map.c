@@ -1,4 +1,7 @@
 #include "map.h"
+#include <string.h>
+
+#define MAP_STRIDE (MAP_W + 1)
 
 // struct of properties for each type of tile
 typedef struct {
@@ -7,8 +10,8 @@ typedef struct {
   char symbol;
 } TileProps;
 
-// test map - player would be unable to move off this map. This will ultimately
-// be replaced with a function that reads txt files from rsc.
+// test map - player would be unable to move off this map. Currently a fallback
+// if the MapLoadFromFile function fails
 static const char *test_map[MAP_H] = {
     "#########################", "#.......................#",
     "#.......................#", "#.......................#",
@@ -18,7 +21,8 @@ static const char *test_map[MAP_H] = {
     "#.......................#", "#.......................#",
     "#.......................#", "#########################"};
 
-// anything that is going to be held within this file only gets a static declaration. Anything called by main gets a declaration in the map.h file.
+// anything that is going to be held within this file only gets a static
+// declaration. Anything called by main gets a declaration in the map.h file.
 
 // init an array of struct type TileProps using the TILE_COUNT as the size of
 // the array.
@@ -40,6 +44,7 @@ static TileType TileFromChar(char c) {
     if (tile_defs[i].symbol == c)
       return (TileType)i;
   }
+  // if a tile type cannot be found, default to floor.
   return TILE_FLOOR;
 }
 
@@ -65,4 +70,25 @@ bool MapIsSolid(int x, int y) {
   if (x < 0 || x >= MAP_W || y < 0 || y >= MAP_H)
     return true;
   return tile_defs[*TileAt(map, x, y)].solid;
+}
+
+bool MapLoadFromFile(const char *path) {
+  bool MapLoaded = false;
+  char *TempMap = LoadFileText(path);
+  const char *rows[MAP_H];
+
+  // load file from Raylib function
+  if (TempMap != NULL) {
+    // check if the length of the file is accurate
+    if (strlen(TempMap) >= (MAP_H * MAP_STRIDE)) {
+      for (int i = 0; i < (MAP_H * MAP_STRIDE); i += MAP_STRIDE) {
+        rows[(i / MAP_STRIDE)] = TempMap + i;
+      }
+      LoadMapFromASCII(map, rows);
+      MapLoaded = true;
+    }
+    UnloadFileText(TempMap);
+  }
+
+  return MapLoaded;
 }

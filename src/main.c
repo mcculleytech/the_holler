@@ -1,6 +1,6 @@
 #include "map.h"
-#include "raylib.h"
 #include "player.h"
+#include "raylib.h"
 
 // link to raylib docs: https://www.raylib.com/
 
@@ -14,8 +14,12 @@ int main(void) {
   // not sure if I love the way this would scale
   // TODO:
   // - [ ] investigate better scaled solutions for drawing map.
+  // - [ ] wire directory in rsc - right now only works from bin. Fine for
+  // testing
 
-  MapLoadTest();
+  if (!MapLoadFromFile("../rsc/test_map.txt")) {
+    MapLoadTest();
+  }
 
   // player attributes
   Player player = {

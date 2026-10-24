@@ -6,10 +6,23 @@ The goal of this repository is twofold.
 
 2. Learn some game development.
 
+## structure
+
+```txt
+the_holler/
+  Makefile
+  README.md
+  STORY.md      narrative outline and per-level design notes
+  src/          C game source
+  rsc/          game resources, map files live under rsc/maps
+  bin/          build output
+  tools/        helper programs, currently the goview map viewer
+```
+
 ---
 ## building the project
 
-As of now, this project builds for MacOS on ARM and Linux. `raylib` is required,, but once that's setup properly you only need to run `make` in the repo root dir. 
+As of now, this project builds for MacOS on ARM and Linux. `raylib` is required, but once that's setup properly you only need to run `make` in the repo root dir. 
 
 ---
 
@@ -50,6 +63,35 @@ One of the advantages of this accessor function is that it works in both directi
 
 `DrawMap` iterates over the same (x, y) grid, reads the `TileType` at each coordinate via `TileAt`, looks up the tile color in `tile_defs`, and draws a rectangle at corresponding pixel position. This happens every frame. 
 
+The `MapLoadFromFile` function takes a NULL terminated string with newline chars from the `LoadFileText` raylib function, builds an array of pointers (currently, sized by the `MAP_H` definition) and makes a call to `LoadMapFromASCII`. We use the pointers because that's the format that `LoadMapFromASCII` is already wired to receive. Rows are found by the `MAP_STRIDE` which is `MAP_W` + 1 (26 for now). Rows start at y times the `MAP_STRIDE`. Falls back in `main.c` to the hardcoded test map if the `MapLoadFromFile` function fails. 
+
+### levels
+
+Level map files are located in the `/rsc` folder under each level name and have the following convention:
+
+```txt
+rsc/
+  maps/
+    the-wedding/         one directory per level
+      layout.txt         room placement for this level (see below)
+      entrypoint.txt     one room per file, MAP_W x MAP_H ASCII
+      barn.txt
+    the-lake/
+      layout.txt
+      ...
+```
+
+
+The layout.txt file is a master file that holds the coordinates of each 'room' and it matches `raylib`'s existing convention where y grows downward and x grows rightward. It has the following convention to make it easier to parse:
+
+```txt
+glade.txt 0 0 
+barn.txt 0 1
+...
+
+```
+
+There's a `tool` written titled `goview` that renders the map in a webserver accesible in browser. This is to get a sense of the placement and scale of items, tiles, signs, npcs, etc. You can view the [README.md](tools/goview/README.md) for more information.
 
 ---
 
@@ -62,7 +104,7 @@ One of the advantages of this accessor function is that it works in both directi
     - [x] rsc
     - [x] bin
 - [x] draw screen
-- [x] draw character (circle) to screen
+- [x] draw character (square) to screen
 - [x] implement movement
 - [x] develop a tiling system for rendering map
 - [x] include linux make, worked with no edit :)
@@ -72,6 +114,8 @@ One of the advantages of this accessor function is that it works in both directi
 - [ ] title screen
 - [ ] reading signs.
 - [ ] inventory system
+- [ ] [develop story](./STORY.md)
+- [ ] save system - whatever is easiest here. 
 
 ### ToDo - movement
 - [ ] implement shift hold speed up.
@@ -80,13 +124,15 @@ One of the advantages of this accessor function is that it works in both directi
 - [ ] wasd based movement(?) 
 - [x] implement a more snap based movement system. 
 
-### ToDo - tiling
+### ToDo - tiling and map
 - [x] create enum of TileTypes
 - [x] create struct of TileProps
 - [x] craft array of tile_defs
 - [x] draw map
 - [x] standalone header file
 - [x] standalone c file
-- [ ] **ON DECK** develop a prototype system for map generation.
-  - [ ] refactor to load maps from text files.
+- [ ] **IN PROGRESS** develop a prototype system for map generation.
+  - [x] refactor to load maps from text files.
   - [ ] investigate 'hot reload' of map files. Implement a reload key or something to that effect?
+  - [ ] **IN PROGRESS** map viewer. util to open html file in browser that shows the map. Util for future projects as well. 
+  - [ ] map viewer keybind in raylib
