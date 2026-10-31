@@ -1,0 +1,3 @@
+# schema: filename.txt x y 
+glade.txt 0 0
+farm.txt 1 0

@@ -8,12 +8,8 @@ import (
 	"github.com/mcculleytech/the_holler/tools/goview/mapfiles"
 )
 
-func Hello(w http.ResponseWriter, req *http.Request) {
-	fmt.Fprint(w, "hello\n")
-}
-
 func Test(w http.ResponseWriter, req *http.Request) {
-	mapContent := mapfiles.ReadMapFile("the-wedding/entrypoint.txt")
+	mapContent := mapfiles.ReadLayout("the-wedding/layout.txt")
 	_, err := fmt.Fprint(w, mapContent)
 	if err != nil {
 		fmt.Println(err)
