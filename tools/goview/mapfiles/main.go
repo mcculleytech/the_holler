@@ -69,3 +69,35 @@ func ReadLayout(fp string) []TileCoordinates {
 
 	return tileMap
 }
+
+// ReadTileMap function will return an array of strings raw ascii, will break on unicode.
+func ReadTileMap(fp string) ([]string, error) {
+	file, err := os.Open(fp)
+	if err != nil {
+		return nil, err
+	}
+
+	defer file.Close()
+
+	var lines []string
+	scanner := bufio.NewScanner(file)
+
+	// scan line by line
+	for scanner.Scan() {
+		lines = append(lines, scanner.Text()) // byte conversion to string
+	}
+
+	expectedWidth := len(lines[0])
+	for i, line := range lines {
+		if len(line) != expectedWidth {
+			return nil, fmt.Errorf("line %d has width %d, expected %d", i, len(line), expectedWidth)
+		}
+	}
+
+	// check for errors during scanning
+	if err := scanner.Err(); err != nil {
+		return nil, err
+	}
+
+	return lines, nil
+}
